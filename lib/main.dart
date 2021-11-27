@@ -1,3 +1,4 @@
+import 'package:contacts_app/TrojangPage.dart';
 import 'package:contacts_app/app-contact.class.dart';
 import 'package:contacts_app/components/contacts-list.dart';
 import 'package:contacts_service/contacts_service.dart';
@@ -10,11 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Contacts',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
       ),
-      home: MyHomePage(title: 'Flutter Contacts'),
+      home: MyHomePage(title: 'Trojang'),
     );
   }
 }
@@ -40,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     getPermissions();
   }
+
   getPermissions() async {
     if (await Permission.contacts.request().isGranted) {
       getAllContacts();
@@ -56,14 +59,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   getAllContacts() async {
-    List colors = [
-      Colors.green,
-      Colors.indigo,
-      Colors.yellow,
-      Colors.orange
-    ];
+    List colors = [Colors.green, Colors.indigo, Colors.yellow, Colors.orange];
     int colorIndex = 0;
-    List<AppContact> _contacts = (await ContactsService.getContacts()).map((contact) {
+    List<AppContact> _contacts =
+        (await ContactsService.getContacts()).map((contact) {
       Color baseColor = colors[colorIndex];
       colorIndex++;
       if (colorIndex == colors.length) {
@@ -110,31 +109,31 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     bool isSearching = searchController.text.isNotEmpty;
-    bool listItemsExist = (
-        (isSearching == true && contactsFiltered.length > 0) ||
-        (isSearching != true && contacts.length > 0)
-    );
+    bool listItemsExist =
+        ((isSearching == true && contactsFiltered.length > 0) ||
+            (isSearching != true && contacts.length > 0));
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Trojang()));
+              },
+              icon: Icon(Icons.ac_unit))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Theme.of(context).primaryColorDark,
         onPressed: () async {
-          try {
-            Contact contact = await ContactsService.openContactForm();
-            if (contact != null) {
-              getAllContacts();
-            }
-          } on FormOperationException catch (e) {
-            switch(e.errorCode) {
-              case FormOperationErrorCode.FORM_OPERATION_CANCELED:
-              case FormOperationErrorCode.FORM_COULD_NOT_BE_OPEN:
-              case FormOperationErrorCode.FORM_OPERATION_UNKNOWN_ERROR:
-                print(e.toString());
-            }
-          }
+          Contact contact = await ContactsService.openDeviceContactPicker();
+          ContactsService.getContacts();
+          print(contact);
+          
         },
       ),
       body: Container(
@@ -142,42 +141,48 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: <Widget>[
             Container(
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  labelText: 'Search',
-                  border: new OutlineInputBorder(
-                    borderSide: new BorderSide(
-                      color: Theme.of(context).primaryColor
-                    )
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Theme.of(context).primaryColor
-                  )
+                // child: TextField(
+                //   controller: searchController,
+                //   decoration: InputDecoration(
+                //     labelText: 'Search',
+                //     border: new OutlineInputBorder(
+                //       borderSide: new BorderSide(
+                //         color: Theme.of(context).primaryColor
+                //       )
+                //     ),
+                //     prefixIcon: Icon(
+                //       Icons.search,
+                //       color: Theme.of(context).primaryColor
+                //     )
+                //   ),
+                // ),
                 ),
-              ),
-            ),
-            contactsLoaded == true ?  // if the contacts have not been loaded yet
-              listItemsExist == true ?  // if we have contacts to show
-              ContactsList(
-                reloadContacts: () {
-                  getAllContacts();
-                },
-                contacts: isSearching == true ? contactsFiltered : contacts,
-              ) : Container(
-                padding: EdgeInsets.only(top: 40),
-                child: Text(
-                  isSearching ?'No search results to show' : 'No contacts exist',
-                  style: TextStyle(color: Colors.grey, fontSize: 20),
-                )
-              ) :
-            Container(  // still loading contacts
-              padding: EdgeInsets.only(top: 40),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
+            contactsLoaded == true
+                ? // if the contacts have not been loaded yet
+                listItemsExist == true
+                    ? // if we have contacts to show
+                    ContactsList(
+                        reloadContacts: () {
+                          getAllContacts();
+                        },
+                        contacts:
+                            isSearching == true ? contactsFiltered : contacts,
+                      )
+                    : Container(
+                        padding: EdgeInsets.only(top: 40),
+                        child: Text(
+                          isSearching
+                              ? 'No search results to show'
+                              : 'No contacts exist',
+                          style: TextStyle(color: Colors.grey, fontSize: 20),
+                        ))
+                : Container(
+                    // still loading contacts
+                    padding: EdgeInsets.only(top: 40),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
           ],
         ),
       ),
