@@ -1,13 +1,7 @@
-# contacts_app
+# Trojang โทรจัง
+## contacts_app
+โทรจังเป็นแอพลิเคชั่นที่สร้างขึ้นเพื่อแสดงเบอร์ติดต่อในรูปแบบที่ง่ายขึ้น สามารถที่จะโทรหาผู้คนได้ภายในการแตะเพียงครั้งเดียว
 
-A new Flutter project to demonstrate how to implement a Contacts List via `contacts_service` package and how to search within that list using name or number.
-
-## Video Tutorials
-### Contacts List & Search Implementation in Flutter - Easy Peasy:
-[![Contacts List & Search Implementation in Flutter - Easy Peasy](https://i9.ytimg.com/vi/NBIF-Wt_ZFQ/mqdefault.jpg?time=1588022677716&sqp=CICZnfUF&rs=AOn4CLCcOnTlJHfCRx74TcJBobSuWY5iqA)](https://youtu.be/NBIF-Wt_ZFQ)
-
-### How to use a gradient background with CircleAvatar in Flutter
-[![How to use a gradient background with CircleAvatar in Flutter](https://i9.ytimg.com/vi/WyyA4mO0HxU/mqdefault.jpg?time=1588023613040&sqp=CLCinfUF&rs=AOn4CLA3iaMh-LvSqtU6mihtTDnfXQAIXg)](https://youtu.be/WyyA4mO0HxU)
 
 ## Getting Started
 
